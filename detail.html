@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Details</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet"/>
+<script  src="https://www.gstatic.com/firebasejs/8.0.1/firebase-auth.js"></script>
+</head>
+<style>
+/* General Card Style */
+
+body{
+    background-color: #111;
+}
+#main-card {
+    background-color: #2b2b2b;
+    color: #f5f5f5;
+    border: 1px solid #111;
+    border-radius: 8px;
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    
+}
+
+/* Image Styling */
+#main-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+/* Headline Styling */
+#main-card h2.card-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #ffffff;
+}
+
+/* Subheadline Styling */
+#main-card p.card-text:first-of-type {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #cccccc;
+}
+
+/* Source Styling */
+#main-card p#source {
+    font-size: 14px;
+    margin-bottom: 20px;
+    color: #888888;
+}
+
+/* News Details Styling */
+#main-card p.card-text:not(:first-of-type) {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #e0e0e0;
+    margin-bottom: 20px;
+}
+
+/* Like and Share Buttons Styling */
+#like, #share {
+    display: inline-block;
+    color: #888888;
+    margin-left: 10px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+#like:hover, #share:hover {
+    color: #ffffff;
+}
+
+#main-card .card-body {
+    padding: 10px 0;
+    text-align: center;
+}
+.navbar {
+      background-color: #2e3236;
+      color: #ffffff;
+      padding-top: 0.75rem;
+      padding-bottom: 0.75rem;
+    }
+    .navbar-brand img {
+      max-height: 50px;
+      border-radius: 50%;
+      position: relative;
+      left: -80px;
+    }
+    .navbar-nav .nav-link {
+      color: #ffffff;
+      margin-left: 15px;
+    }
+    .navbar-nav .nav-link:hover {
+      color: #cccccc;
+    }
+    .brand-name .nav-link {
+      color: #ffffff;
+      font-size: medium;
+      font-weight: bolder;
+      position: relative;
+      left: -80px;
+    }
+    .header-text {
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 15px;
+      color: #ffffff;
+    }
+    .header-text h6, .header-text small {
+      margin: 0;
+    }
+    .footer {
+    background-color: #111; /* Darker background color */
+    color: white;
+    padding: 20px 0;
+    margin-top: 20px;
+    position: relative;
+    font-size: x-small;
+}
+
+.footer a {
+    color: white;
+    text-decoration: none;
+}
+
+.footer .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.footer .row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.footer .col {
+    flex: 1;
+    min-width: 200px;
+    margin: 10px 0;
+}
+
+.footer .col h5 {
+    margin-bottom: 15px;
+
+}
+
+.footer .social-icons, .footer .download-apps {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.footer .social-icons a, .footer .download-apps a {
+    margin-right: 10px;
+    font-size: 24px;
+}
+
+.footer .vertical-line {
+    background-color: #fff; /* White line color */
+    width: 1px;
+    height: 100%;
+    position: absolute;
+    top: 20px;
+    bottom: 20px;
+}
+
+.footer {
+    position: relative;
+
+}
+
+.vertical-line, vertical-line-left {
+    position: absolute;
+    width: 1px;
+    background-color: #fff; /* Adjust the color as needed */
+}
+.vertical-line, vertical-line-right {
+    position: absolute;
+    width: 2px;
+    background-color: #fff; /* Adjust the color as needed */
+}
+
+
+.footer .vertical-line-left {
+    left: 37.8%;
+    height: 200px;
+    top: 70px; /* Adjust the top position as needed */
+}
+
+.footer .vertical-line-right {
+    left: 60.5%;
+    height: 200px;
+    top: 70px; /* Adjust the top position as needed */
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 1200px) {
+    .footer .vertical-line-left {
+        left: 33%;
+    }
+
+    .footer .vertical-line-right {
+        left: 60%;
+    }
+}
+
+@media (max-width: 992px) {
+    .footer .vertical-line-left {
+        left: 30%;
+    }
+
+    .footer .vertical-line-right {
+        left: 57%;
+    }
+}
+
+@media (max-width: 768px) {
+    .footer .vertical-line-left {
+        left: 27%;
+    }
+
+    .footer .vertical-line-right {
+        left: 54%;
+    }
+}
+
+@media (max-width: 576px) {
+    .footer .vertical-line-left {
+        left: 25%;
+    }
+
+    .footer .vertical-line-right {
+        left: 52%;
+    }
+}
+
+
+.footer .horizontal-line {
+    background-color: #fff; /* White line color */
+    height: 1px;
+  
+}
+
+.footer .read-more {
+    display: block;
+    margin-top: 130px;
+    text-align: left;
+    font-size: 14px;
+    margin-left: 250px;
+}
+
+.footer .terms {
+    text-align: left;
+    font-size: 12px;
+    margin-top: 10px;
+}
+
+.footer .quick-links a {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.footer .footer-bottom-line {
+    background-color: #fff; /* White line color */
+    height: 1px;
+    width: 100%;
+    margin: 20px 0;
+}
+.subscribe-btn {
+            background-color: #27ceef;
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-weight: bold;
+        }
+
+        .subscribe-btn:hover {
+            background-color: #f0f0f0;
+        }
+</style>
+<body>
+    <header id="header1"onclick="k()">
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container d-flex align-items-center">
+              <a class="navbar-brand" href="#">
+                <img src="logo.png.png" alt="Logo">
+              </a>
+              <div class="header-text"style='position: relative;left:-1050px;'>
+                <h6 style="position: relative;left: 80px;">Yolo News Channel</h6>
+                <small style="position: relative;left: 80px;" >News That Matters</small>
+              </div>
+            </div>
+          </nav>
+      </header>
+      <header class="header py-3"id='header2'style='display:none;background-color:#444;color:white;'onclick="k()">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <img src="logo.png.png" alt="Yolo Logo" class="rounded-circle mr-3" style="width: 50px; height: 50px;">
+                <h6 class="m-0">Yolo News Channel news that matters</h6>
+                
+            </div>
+            <button class="btn btn-light subscribe-btn">Subscribe</button>
+        </div>
+    </header>
+    <div id="details" class="container mt-5">
+        <!-- Details will be injected here -->
+    </div>
+    <footer class="footer"id='footer1'>
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <h5 style='position: relative;left:100px;'>FOLLOW US</h5>
+                    <div class="social-icons"style='position: relative;left:100px;'>
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                    <h5 style='position: relative;left:100px;'>DOWNLOAD APPS</h5>
+                    <div class="download-apps"style='position: relative;left:100px;'>
+                        <a href="#"><i class="fab fa-apple"></i></a>
+                        <a href="#"><i class="fab fa-google-play"></i></a>
+                        <a href="#"><i class="fab fa-windows"></i></a>
+                    </div>
+                    <a href="#" class="terms"style='position: relative;left:100px;'>Daily News Update : Subscribe | UnSubscribe</a>
+                </div>
+                <div class="vertical-line vertical-line-left"></div>
+                <div class="col">
+                    <h6 style="position: relative;left: 15px;">About Us</h6>
+                    <p style="position: relative;left: 15px;">Yolo News Channel Provides News that matter to common People.</p>
+                    <a href="#" class="read-more">Read More...</a>
+                </div>
+                <div class="vertical-line vertical-line-right"></div>
+                <div class="col quick-links">
+                    <h5>QUICK LINKS</h5>
+                    <a href="#">T&C</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Advertise with Us</a>
+                    <a href="#">Contact Us</a>
+                    <a href="#">Statutory provisions on reporting (sexual offenses)</a>
+                    <a href="#">This website follows the DNPA’s code of conduct</a>
+                    <a href="#">CSR</a>
+                </div>
+            </div>
+            <div class="footer-bottom-line"></div>
+            <p class="text-center"style='position: relative;left:-344px;'>&copy; 2024 The Yolo News - (Yolo Ride London Ltd) All Rights Reserved.</p>
+        </div>
+    </footer>
+    <footer class="footer"style='z-index:100;display:none;'id='footer2'>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5>FOLLOW US</h5>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                    <h5>DOWNLOAD APPS</h5>
+                    <div class="download-apps">
+                        <a href="#"><i class="fab fa-apple"></i></a>
+                        <a href="#"><i class="fab fa-google-play"></i></a>
+                        <a href="#"><i class="fab fa-windows"></i></a>
+                    </div>
+                    <a href="#" class="terms">Daily News Update : Subscribe | UnSubscribe</a>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h6>About Us</h6>
+                    <p>Yolo News Channel Provides News that matter to common People.</p>
+                 
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5>QUICK LINKS</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#">T&C</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Advertise with Us</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Statutory provisions on reporting (sexual offenses)</a></li>
+                        <li><a href="#">This website follows the DNPA’s code of conduct</a></li>
+                        <li><a href="#">CSR</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom text-center">
+                <p>&copy; 2024 The Yolo News - (Yolo Ride London Ltd) All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script  src="https://www.gstatic.com/firebasejs/8.0.1/firebase-auth.js"></script>
+    <script>
+        // Initialize Firebase
+        // (Include your Firebase initialization code here)
+        var firebaseConfig = {
+    apiKey: "AIzaSyDhZPE8mascQUpraZYrDWKMYa2a0cp7LFw",
+    authDomain: "yolopanel.firebaseapp.com",
+    databaseURL: "https://yolopanel-default-rtdb.firebaseio.com",
+    projectId: "yolopanel",
+    storageBucket: "yolopanel.appspot.com",
+    messagingSenderId: "647674058442",
+    appId: "1:647674058442:web:ca6822cfcbda29b2aac633"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+function k(){
+    location.href='index.html'
+}
+  function isMobileDevice() {
+            return /Mobi|Android/i.test(navigator.userAgent);
+        }
+
+        if (isMobileDevice()) {
+           
+            document.getElementById('footer2').style.display='block'
+            document.getElementById('footer1').style.display='none'
+            document.getElementById('header1').style.display='none'
+            document.getElementById('header2').style.display='block'
+        }
+
+        // Get the ID from the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
+
+        // Fetch the data for the given ID
+        firebase.database().ref("news/" + id).once('value').then(function(snapshot) {
+    const data = snapshot.val();
+    const detailsHtml = `
+        <center><div class='card mb-3' id='main-card'>
+            <div class='card-body'>
+                <h2 class='card-title'>${data.headline}</h2>
+                <p class="card-text"><small class="text-muted" id='source'>Source: ${data.source}</small></p>
+                <p class='card-text'>${data.subHeadline}</p>
+                <img src="${data.image || ''}" class="card-img-top">
+                <p class='card-text'>${data.details}</p>
+                <div>
+                    <i class="fa fa-thumbs-up" id='like' aria-hidden="true"></i>
+                    <i class="fas fa-share" id='share' aria-hidden="true"></i>
+                </div>
+            </div>
+        </div></center>
+    `;
+    document.getElementById('details').innerHTML = detailsHtml;
+});
+
+    </script>
+</body>
+</html>

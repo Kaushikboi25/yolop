@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real-time Exchange Rates</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color:#171a1b ;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    
+    .container {
+      background-color: #241e1e64;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 400px;
+    }
+    
+    h1 {
+      text-align: center;
+      color: white;
+    }
+    
+    ul {
+      list-style-type: none;
+      padding: 0;
+      color:white;
+    }
+    
+    li {
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      color: white;
+    }
+    
+    .currency-name {
+      font-weight: bold;
+      color: white;
+    }
+    
+    .exchange-rate {
+      font-size: 0.9em;
+      color: #555;
+    }
+
+    .increase {
+      color: green;
+    }
+
+    .decrease {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <ul id="currency-list"></ul>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const apiUrl = 'https://api.exchangerate-api.com/v4/latest/USD';
+      const currencyList = document.getElementById('currency-list');
+
+      function fetchAndDisplayRates() {
+        fetch(apiUrl)
+          .then(response => response.json())
+          .then(data => {
+            const rates = data.rates;
+
+            // Define currencies to display
+            const currencies = [
+              { code: 'GBP', name: '£' },
+              { code: 'USD', name: '$' },
+              { code: 'EUR', name: '€' },
+              { code: 'INR', name: '₹' },
+              { code: 'RUB', name: '₽' }
+            ];
+
+            // Clear previous list items
+            currencyList.innerHTML = '';
+
+            // Display exchange rates for selected currencies
+            currencies.forEach(currency => {
+              const exchangeRate = rates[currency.code];
+              const previousRate = parseFloat(currencyList.getAttribute(`data-${currency.code}`)) || exchangeRate;
+              const listItem = document.createElement('li');
+              listItem.innerHTML = `
+                <span class="currency-name">${currency.name}</span>:
+                <span class="exchange-rate">${exchangeRate.toFixed(1)} $ </span>
+              `;
+              if (exchangeRate > previousRate) {
+                listItem.classList.add('increase');
+                listItem.innerHTML += `<span>&uarr;</span>`;
+              } else if (exchangeRate < previousRate) {
+                listItem.classList.add('decrease');
+                listItem.innerHTML += `<span>&darr;</span>`;
+              }
+              currencyList.appendChild(listItem);
+              currencyList.setAttribute(`data-${currency.code}`, exchangeRate);
+            });
+          })
+          .catch(error => {
+            console.error('Error fetching data:', error);
+          });
+      }
+
+      // Fetch and display rates initially
+      fetchAndDisplayRates();
+
+      // Fetch and display rates every 10 seconds
+      setInterval(fetchAndDisplayRates, 10000);
+    });
+  </script>
+</body>
+</html>

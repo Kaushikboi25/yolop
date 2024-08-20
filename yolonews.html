@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yolo News</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css">
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fuckadblock/3.2.1/fuckadblock.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuckadblock@3.2.1/fuckadblock.min.js"></script>
+<script  src="https://www.gstatic.com/firebasejs/8.0.1/firebase-auth.js"></script>
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+        }
+
+        .header {
+            background-color: #000000;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 1.25rem;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        .subscribe-btn {
+            background-color: #27ceef;
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-weight: bold;
+        }
+
+        .subscribe-btn:hover {
+            background-color: #f0f0f0;
+        }
+
+        .carousel-inner img {
+            height: 400px;
+            object-fit: cover;
+        }
+
+        .carousel-caption {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
+
+        .carousel-indicators li {
+            background-color: #fff;
+        }
+
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            background-color: #fff;
+            border-radius: 50%;
+            padding: 1rem;
+        }
+
+        .category-buttons {
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: center;
+            margin: 2rem 0;
+            overflow-x: auto;
+        }
+
+        .category-buttons .btn {
+            background-color: transparent;
+            border: 1px solid #ffffff;
+            color: #ffffff;
+            font-weight: bold;
+            margin: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            transition: background-color 0.3s;
+            border-radius: 0;
+            white-space: nowrap;
+        }
+
+        .category-buttons .btn:hover {
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1rem;
+            }
+
+            .carousel-inner img {
+                height: 200px;
+            }
+
+            .category-buttons {
+                justify-content: flex-start;
+            }
+        }
+
+        .content-box {
+            background-color: #1f1f1f;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .content-box h2 {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .content-box p {
+            margin: 0.5rem 0;
+        }
+
+        .content-box .separator {
+            border-bottom: 1px solid #ffffff;
+            margin: 1rem 0;
+        }
+
+        .yolo-tv-box {
+            background-color: #1f1f1f;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .yolo-tv-box iframe {
+            width: 100%;
+            height: 300px;
+            border: none;
+        }
+
+        .footer {
+            background-color: #000000;
+            color: #ffffff;
+            padding: 2rem 0;
+            z-index: 100;
+            position: absolute;
+        }
+
+        .footer h5,
+        .footer h6 {
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .footer p {
+            margin-bottom: 1rem;
+        }
+
+        .footer .social-icons a,
+        .footer .download-apps a {
+            color: #ffffff;
+            margin-right: 0.75rem;
+            text-decoration: none;
+        }
+
+        .footer .social-icons a:hover,
+        .footer .download-apps a:hover {
+            color: #cccccc;
+        }
+
+        .footer .list-unstyled li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer .list-unstyled a {
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .footer .list-unstyled a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #444;
+            padding-top: 1rem;
+            color: #ffffff;
+        }
+
+        @media (max-width: 768px) {
+            .footer .row {
+                flex-direction: column;
+            }
+
+            .footer .col {
+                text-align: center;
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <input id='segr2'placeholder='Search Here'type='text'onkeyup='searchFun()'style='display:none;'>
+    <!-- Header -->
+    <header class="header py-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <img src="logo.png.png" alt="Yolo Logo" class="rounded-circle mr-3" style="width: 50px; height: 50px;">
+                <h6 class="m-0">Yolo News Channel <br> News that matters</h6>
+                
+            </div>
+            <button class="btn btn-light subscribe-btn">Subscribe</button>
+        </div>
+    </header>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-3">
+                <div class="box bg-light" style="height: 50px;width: 75px; border-radius: 10px;"><img id='sponser1'style='postion:absolute;width:100%;height:100%;object-fit:cover;'></div>
+            </div>
+            <div class="col-3">
+                <div class="box bg-light" style="height: 50px;width: 75px; border-radius: 10px;"><img id='sponser2'style='postion:absolute;width:100%;height:100%;object-fit:cover;'></div>
+            </div>
+            <div class="col-3">
+                <div class="box bg-light" style="height: 50px;width: 75px; border-radius: 10px;"><img id='sponser3'style='postion:absolute;width:100%;height:100%;object-fit:cover;'></div>
+            </div>
+            <div class="col-3">
+                <div class="box bg-light" style="height: 50px;width: 75px; border-radius: 10px;"><img id='sponser4'style='postion:absolute;width:100%;height:100%;object-fit:cover;'></div>
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap Slider -->
+    <div id="newsCarousel" class="carousel slide mt-4" data-ride="carousel">
+        <ol class="carousel-indicators">
+            <li data-target="#newsCarousel" data-slide-to="0" class="active"></li>
+            <li data-target="#newsCarousel" data-slide-to="1"></li>
+            <li data-target="#newsCarousel" data-slide-to="2"></li>
+            <li data-target="#newsCarousel" data-slide-to="3"></li>
+            <li data-target="#newsCarousel" data-slide-to="4"></li>
+          
+        </ol>
+        <div class="carousel-inner">
+          
+            <!-- Add more slides as needed -->
+        </div>
+        <a class="carousel-control-prev" href="#newsCarousel" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#newsCarousel" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+
+    <!-- Category Buttons -->
+    <div class="container mt-4 category-buttons">
+        <button type="button" class="btn"onclick='latest()'>Latest</button>
+        <button type="button" class="btn"onclick='politics()'>Politics</button>
+        <button type="button" class="btn"onclick='business()'>Business</button>
+        <button type="button" class="btn"onclick='finance()'>Finance</button>
+        <button type="button" class="btn"onclick='science()'>Science</button>
+        <button type="button" class="btn"onclick='sports()'>Sports</button>
+        <button type="button" class="btn"onclick='special()'>Special</button>
+        <button type="button" class="btn"onclick='technology()'>Technology</button>
+    </div>
+
+    <!-- Content Boxes -->
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="content-box"id='news-section2'>
+                  
+                </div>
+            </div>
+          
+        </div>
+    </div>
+
+    <!-- Yolo TV Box -->
+    <div class="container mt-4">
+        <div class="yolo-tv-box">
+            <video style="position: absolute;width: 80%;height: 80%;left: 10%;top: 10%;border-radius: 10px;"id='yolotv'controls></video>
+        </div>
+    </div>
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-12 d-flex justify-content-center">
+                <div class="box bg-light mb-3" style="width: 90%; height: 80px; border-radius: 10px;"onclick="location.href='form.html';"><img class='product'style='positon:absolute;width: 100%;height:90%;object-fit:cover;'></div>
+            </div>
+            <div class="col-12 d-flex justify-content-center">
+                <div class="box bg-light" style="width: 90%; height: 80px; border-radius: 10px;"onclick="location.href='form2.html';"><img class='place'style='positon:absolute;width: 100%;height:90%;object-fit:cover;'></div>
+            </div>
+        </div>
+    </div>
+    <div id="content"style='position:relative;top:50px;overflow-y:scroll;'>
+      
+        <div id="content" class="row"></div>
+      </div>
+
+    <!-- Footer -->
+    <footer class="footer"style='z-index:100;'>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5>FOLLOW US</h5>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                    <h5>DOWNLOAD APPS</h5>
+                    <div class="download-apps">
+                        <a href="#"><i class="fab fa-apple"></i></a>
+                        <a href="#"><i class="fab fa-google-play"></i></a>
+                        <a href="#"><i class="fab fa-windows"></i></a>
+                    </div>
+                    <a href="#" class="terms">Daily News Update : Subscribe | UnSubscribe</a>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h6>About Us</h6>
+                    <p>Yolo News Channel Provides News that matter to common People.</p>
+                    <a href="#" class="read-more">Read More...</a>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5>QUICK LINKS</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#">T&C</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Advertise with Us</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Statutory provisions on reporting (sexual offenses)</a></li>
+                        <li><a href="#">This website follows the DNPA’s code of conduct</a></li>
+                        <li><a href="#">CSR</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom text-center">
+                <p>&copy; 2024 The Yolo News - (Yolo Ride London Ltd) All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        var firebaseConfig = {
+    apiKey: "AIzaSyDhZPE8mascQUpraZYrDWKMYa2a0cp7LFw",
+    authDomain: "yolopanel.firebaseapp.com",
+    databaseURL: "https://yolopanel-default-rtdb.firebaseio.com",
+    projectId: "yolopanel",
+    storageBucket: "yolopanel.appspot.com",
+    messagingSenderId: "647674058442",
+    appId: "1:647674058442:web:ca6822cfcbda29b2aac633"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  fuckAdBlock.on(true, function() {
+    
+}).on(false, function() {
+    document.getElementById('displayb').style.display='none'
+});
+
+  
+  firebase.database().ref("sponser").on("child_added", function(snapshot) {
+
+var imageUrl = snapshot.val().image;
+
+  // Select the image element with the class 'sponserimg'
+  var sponserImage = document.querySelector('.sponserimg');
+
+  // Update the image's src attribute with the URL from the database
+  sponserImage.src = imageUrl;
+
+});
+firebase.database().ref("sponser2").on("child_added", function(snapshot) {
+
+var imageUrl = snapshot.val().image;
+
+  // Select the image element with the class 'sponserimg'
+  var sponserImage2 = document.querySelector('.sponserimg2');
+
+  // Update the image's src attribute with the URL from the database
+  sponserImage2.src = imageUrl;
+
+});
+
+firebase.database().ref("sponsersup").on("child_added", function(snapshot) {
+
+var imageUrl = snapshot.val().image;
+
+  // Select the image element with the class 'sponserimg'
+  var sponserImage = document.getElementById('sponser1');
+
+  // Update the image's src attribute with the URL from the database
+  sponserImage.src = imageUrl;
+
+});
+firebase.database().ref("sponsersup2").on("child_added", function(snapshot) {
+
+var imageUrl = snapshot.val().image;
+
+  // Select the image element with the class 'sponserimg'
+  var sponserImage = document.getElementById('sponser2');
+
+  // Update the image's src attribute with the URL from the database
+  sponserImage.src = imageUrl;
+
+});
+
+
+firebase.database().ref("sponsersup3").on("child_added", function(snapshot) {
+
+var imageUrl = snapshot.val().image;
+
+  // Select the image element with the class 'sponserimg'
+  var sponserImage = document.getElementById('sponser3');
+
+  // Update the image's src attribute with the URL from the database
+  sponserImage.src = imageUrl;
+
+});
+firebase.database().ref("sponsersup4").on("child_added", function(snapshot) {
+
+var imageUrl = snapshot.val().image;
+
+  // Select the image element with the class 'sponserimg'
+  var sponserImage = document.getElementById('sponser4');
+
+  // Update the image's src attribute with the URL from the database
+  sponserImage.src = imageUrl;
+
+});
+
+firebase.database().ref("product").on("child_added", function(snapshot) {
+
+var imageUrl = snapshot.val().image;
+
+  // Select the image element with the class 'sponserimg'
+  var productImage = document.querySelector('.product');
+
+  // Update the image's src attribute with the URL from the database
+  productImage.src = imageUrl;
+ 
+});
+firebase.database().ref("place").on("child_added", function(snapshot) {
+
+var imageUrl = snapshot.val().image;
+
+  // Select the image element with the class 'sponserimg'
+  var productImage = document.querySelector('.place');
+
+  // Update the image's src attribute with the URL from the database
+  productImage.src = imageUrl;
+
+});
+
+
+
+
+
+
+function fetchNews() {
+            firebase.database().ref("news").once('value').then(function(snapshot) {
+                var categories = {};
+
+                // Fetch categories from Firebase
+                firebase.database().ref("categories").once('value').then(function(categorySnapshot) {
+                    var categoryNames = {};
+
+                    // Store category names by their keys
+                    categorySnapshot.forEach(function(catSnap) {
+                        categoryNames[catSnap.key] = catSnap.val().cat;
+                    });
+
+                    // Group news by category
+                    snapshot.forEach(function(newsSnapshot) {
+                        var newsData = newsSnapshot.val();
+                        var newsId = newsSnapshot.key; // Get the unique ID of the news item
+                        var categoryKey = newsData.category || "Uncategorized";
+                        var categoryName = categoryNames[categoryKey] || "Uncategorized";
+
+                        if (!categories[categoryName]) {
+                            categories[categoryName] = [];
+                        }
+
+                        newsData.id = newsId; // Store the news ID with the news data
+                        categories[categoryName].push(newsData);
+                    });
+
+                    var newsContainer = document.getElementById("news-section2");
+
+                    // Display news under each category
+                    for (var categoryName in categories) {
+                        var newsList = categories[categoryName];
+                        var newsHTML = `<div class="category-section">
+                                            <h5 class="section-title">${categoryName}</h5>
+                                            <ul>`;
+
+                        var count = 0;
+                        newsList.slice(-4).reverse().forEach(function(newsItem) {
+                            if (count < 4) {
+                                newsHTML += `<li class="news-box">
+                                                <a href="detail.html?id=${newsItem.id}" class="text-light"style='color:white;'>${newsItem.headline}</a>
+                                             </li>`;
+                                count++;
+                            }
+                        });
+
+                        newsHTML += `<li class="news-box read-more"style='position:relative;left:220px;width:100px;color:white;'>Read More...</li></ul><hr></div>`;
+                        newsContainer.innerHTML += newsHTML;
+                    }
+                });
+            });
+        }
+
+        fetchNews();
+
+
+
+
+      
+        
+
+// Function to fetch and display news based on category
+firebase.database().ref("news").on("child_added", function(snapshot) {
+    var id = snapshot.key; // Get the unique ID of the card
+    var html = `
+        <center>
+            <a href="detail.html?id=${id}" class="card-link"style='color:black;'>
+                <div class='card mb-3' id='card'>
+                    
+                    <div class='card-body'>
+                        <div class="fa fa-thumbs-up"id='like' aria-hidden="true"></div> <div class="fas fa-share"id='share' aria-hidden="true"></div><h5 class='card-title'>${snapshot.val().headline}</h5>
+                        <p class='card-text'>${snapshot.val().subHeadline}</p>
+                         <p class='card-text'style='display:none;'>${snapshot.val().categ}</p>
+                       <p class="card-text"><small class="text-muted"id='source'>Source:${snapshot.val().source}</small></p>
+                        <p class="card-text" style='display:none;'><small class="text-muted"id='source'>Source:${snapshot.val().category}</small></p>
+                    </div>
+                    <img src=${snapshot.val().image || ""} class="card-img-top">
+                      
+                </div>
+            </a>
+        </center>
+    `;
+    var places = document.getElementById("content");
+    places.innerHTML = html + places.innerHTML;
+});
+
+
+function displayDateAndDay() {
+    const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    
+    const today = new Date();
+    const dayName = daysOfWeek[today.getDay()];
+
+    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const year = today.getFullYear();
+
+    const formattedDate = `${dayName}, ${day}/${month}/${year}`;
+    
+    document.querySelector('.datee').textContent = formattedDate;
+}
+
+window.onload = displayDateAndDay;
+
+const searchFun=()=>{
+  let filter=document.getElementById('segr2').value.toUpperCase();
+    let ul=document.getElementById('content')
+    let li=ul.getElementsByTagName('div')
+
+    for(var i=0; i<li.length; i++){
+        let a=li[i]
+        let textValue=a.textContent||a.innerHTML;
+        if(textValue.toUpperCase().indexOf(filter)>-1){
+            li[i].style.display='block';
+        
+
+
+
+
+        }else{
+            li[i].style.display='none'
+           
+        }
+    }
+    }
+function sports(){
+  let filter2=document.getElementById('segr2').value='sports'
+  let filter=document.getElementById('segr2').value.toUpperCase();
+    let ul=document.getElementById('content')
+    let li=ul.getElementsByTagName('div')
+
+    for(var i=0; i<li.length; i++){
+        let a=li[i]
+        let textValue=a.textContent||a.innerHTML;
+        if(textValue.toUpperCase().indexOf(filter)>-1){
+            li[i].style.display='block';
+        
+
+
+
+
+        }else{
+            li[i].style.display='none'
+           
+        }
+    }
+}
+function latest(){
+  let filter2=document.getElementById('segr2').value='Latest'
+  let filter=document.getElementById('segr2').value.toUpperCase();
+    let ul=document.getElementById('content')
+    let li=ul.getElementsByTagName('div')
+
+    for(var i=0; i<li.length; i++){
+        let a=li[i]
+        let textValue=a.textContent||a.innerHTML;
+        if(textValue.toUpperCase().indexOf(filter)>-1){
+            li[i].style.display='block';
+        
+
+
+
+
+        }else{
+            li[i].style.display='none'
+           
+        }
+    }
+}
+function politics(){
+  let filter2=document.getElementById('segr2').value='Politics'
+  let filter=document.getElementById('segr2').value.toUpperCase();
+    let ul=document.getElementById('content')
+    let li=ul.getElementsByTagName('div')
+
+    for(var i=0; i<li.length; i++){
+        let a=li[i]
+        let textValue=a.textContent||a.innerHTML;
+        if(textValue.toUpperCase().indexOf(filter)>-1){
+            li[i].style.display='block';
+        
+
+
+
+
+        }else{
+            li[i].style.display='none'
+           
+        }
+    }
+}
+function business(){
+  let filter2=document.getElementById('segr2').value='Business'
+  let filter=document.getElementById('segr2').value.toUpperCase();
+    let ul=document.getElementById('content')
+    let li=ul.getElementsByTagName('div')
+
+    for(var i=0; i<li.length; i++){
+        let a=li[i]
+        let textValue=a.textContent||a.innerHTML;
+        if(textValue.toUpperCase().indexOf(filter)>-1){
+            li[i].style.display='block';
+        
+
+
+
+
+        }else{
+            li[i].style.display='none'
+           
+        }
+    }
+}
+
+function finance(){
+  let filter2=document.getElementById('segr2').value='Finance'
+  let filter=document.getElementById('segr2').value.toUpperCase();
+    let ul=document.getElementById('content')
+    let li=ul.getElementsByTagName('div')
+
+    for(var i=0; i<li.length; i++){
+        let a=li[i]
+        let textValue=a.textContent||a.innerHTML;
+        if(textValue.toUpperCase().indexOf(filter)>-1){
+            li[i].style.display='block';
+        
+
+
+
+
+        }else{
+            li[i].style.display='none'
+           
+        }
+    }
+}function science(){
+  let filter2=document.getElementById('segr2').value='Science'
+  let filter=document.getElementById('segr2').value.toUpperCase();
+    let ul=document.getElementById('content')
+    let li=ul.getElementsByTagName('div')
+
+    for(var i=0; i<li.length; i++){
+        let a=li[i]
+        let textValue=a.textContent||a.innerHTML;
+        if(textValue.toUpperCase().indexOf(filter)>-1){
+            li[i].style.display='block';
+        
+
+
+
+
+        }else{
+            li[i].style.display='none'
+           
+        }
+    }
+}
+function special(){
+  let filter2=document.getElementById('segr2').value='Special'
+  let filter=document.getElementById('segr2').value.toUpperCase();
+    let ul=document.getElementById('content')
+    let li=ul.getElementsByTagName('div')
+
+    for(var i=0; i<li.length; i++){
+        let a=li[i]
+        let textValue=a.textContent||a.innerHTML;
+        if(textValue.toUpperCase().indexOf(filter)>-1){
+            li[i].style.display='block';
+        
+
+
+
+
+        }else{
+            li[i].style.display='none'
+           
+        }
+    }
+}
+function technology(){
+  let filter2=document.getElementById('segr2').value='technology'
+  let filter=document.getElementById('segr2').value.toUpperCase();
+    let ul=document.getElementById('content')
+    let li=ul.getElementsByTagName('div')
+
+    for(var i=0; i<li.length; i++){
+        let a=li[i]
+        let textValue=a.textContent||a.innerHTML;
+        if(textValue.toUpperCase().indexOf(filter)>-1){
+            li[i].style.display='block';
+        
+
+
+
+
+        }else{
+            li[i].style.display='none'
+           
+        }
+    }
+}
+firebase.database().ref("news").limitToLast(5).on("child_added", function(snapshot) {
+    var id = snapshot.key; // Get the unique ID of the card
+    var imageUrl = snapshot.val().image || "";
+
+    // Create a new carousel item
+    var carouselItem = `
+        <div class="carousel-item ${document.querySelectorAll('.carousel-item').length === 0 ? 'active' : ''}">
+            <img class="d-block w-100" src="${imageUrl}" alt="Slide ${id}">
+        </div>
+    `;
+
+    // Add the new carousel item to the carousel-inner div
+    var carouselInner = document.querySelector(".carousel-inner");
+    carouselInner.innerHTML = carouselItem + carouselInner.innerHTML;
+
+    // Optionally, you can still add the card HTML here if needed
+});
+function getLatestVideo() {
+    const storageRef = storage.ref();
+    const videosRef = storageRef.child('videos');
+
+    // List all items in the 'videos' folder
+    videosRef.listAll().then(function(result) {
+        // Get the last item (latest uploaded video)
+        if (result.items.length > 0) {
+            const latestVideoRef = result.items[result.items.length - 1];
+
+            // Get the download URL
+            latestVideoRef.getDownloadURL().then(function(url) {
+                document.getElementById('yolotv').src = url;
+            }).catch(function(error) {
+                console.error('Error getting download URL:', error);
+            });
+        }
+    }).catch(function(error) {
+        console.error('Error listing videos:', error);
+    });
+}
+  
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-storage.js"></script>
+    <style>
+        .container {
+            margin-top: 20px;
+        }
+        .form-box {
+            padding: 20px;
+            border: 1px solid #000;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .form-title {
+            margin-bottom: 10px;
+        }
+        .category-list {
+            margin-top: 10px;
+        }
+        .category-list ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .category-list li {
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .divider {
+            border-left: 2px solid black;
+            height: 100%;
+        }
+        .container {
+            margin-top: 20px;
+        }
+        .form-box {
+            padding: 20px;
+            border: 1px solid #000;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .form-title {
+            margin-bottom: 10px;
+        }
+        .input-group-text {
+            min-width: 150px;
+        }
+        .input-group.mb-3 input {
+            max-width: 150px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <!-- Add Category Section -->
+            <div class="col-md-4">
+                <div class="form-box">
+                    <button type="button" class="btn btn-outline-dark w-100 mb-2">Add Category</button>
+                    <div class="form-title"><strong>Add new Category</strong></div>
+                    <div>
+                        <div class="mb-3">
+                            <label for="categoryName" class="form-label">Category Name:</label>
+                            <input type="text" class="form-control" id="categoryName" placeholder="Enter category name">
+                        </div>
+                        <button type="button" class="btn btn-dark w-100" onclick='whutmo()'>Save</button>
+                    </div>
+                </div>
+
+                <!-- View Category Section -->
+                <div class="form-box category-list">
+                    <button type="button" class="btn btn-outline-dark w-100 mb-2">View Category</button>
+                    <ul id="catnames">
+                        <!-- Dynamic Category List -->
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-md-1 d-none d-md-block">
+                <div class="divider"></div>
+            </div>
+
+            <!-- Add News Section -->
+            <div class="col-md-7">
+                <div class="form-box">
+                    <button type="button" class="btn btn-outline-dark w-100 mb-2">Add News</button>
+                    <form id="newsForm">
+                        <div class="mb-3">
+                            <label for="headline" class="form-label">Headline:</label>
+                            <input type="text" class="form-control" id="headline" placeholder="Enter headline">
+                        </div>
+                        <div class="mb-3">
+                            <label for="subHeadline" class="form-label">Sub Headline:</label>
+                            <input type="text" class="form-control" id="subHeadline" placeholder="Enter sub headline">
+                        </div>
+                        <div class="mb-3">
+                            <label for="newsDetails" class="form-label">News Details:</label>
+                            <textarea class="form-control" id="newsDetails" rows="5" placeholder="Enter news details"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="image" class="form-label">Image:</label>
+                            <input type="file" class="form-control" id="image2">
+                            <input hidden id="imageSource">
+                            <img src="#" id="imgshow" style="display:none;">
+                        </div>
+                        <div class="mb-3">
+                            <label for="source" class="form-label">Source:</label>
+                            <input type="text" class="form-control" id="source" placeholder="Enter source">
+                        </div>
+                        <div class="mb-3">
+                            <label for="source" class="form-label">Category:</label>
+                            <input disabled type="text" class="form-control" id="categ" placeholder="Enter category">
+                        </div>
+                        <div class="mb-3">
+                            <label for="newsCategory" class="form-label">News Category:</label>
+                            <select class="form-select" id="newsCategory" onchange='updateCategory2()'>
+                                <option selected disabled value="" style="display:none;">Select Category</option>
+                                <!-- Other options will be appended here by JavaScript -->
+                            </select>
+                            
+                        </div>
+                        <button type="button" class="btn btn-dark" onclick="saveNews()">Save</button>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="sponsorCheck" disabled>
+                            <label class="form-check-label" for="sponsorCheck1">Image Uploaded</label>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <!-- Add Sponsor Section -->
+        <div class="form-box">
+            <div class="form-title"><strong>Add Sponsor</strong></div>
+            <form>
+                <div class="input-group mb-3">
+                    <label class="input-group-text" for="sponsorLogo1">Choose file</label>
+                    <input type="file" class="form-control" id="sponsorLogo1"onchange='handleImageUpload55()'>
+                    <button type="button" class="btn btn-outline-dark"onclick='add1()'>Add</button>
+                    <input type="hidden" id="imageSource55">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="sponsorCheck1" disabled>
+                        <label class="form-check-label" for="sponsorCheck1">Image Uploaded</label>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <label class="input-group-text" for="sponsorLogo2">Choose file</label>
+                    <input type="file" class="form-control" id="sponsorLogo2"onchange='handleImageUpload2()'>
+                    <button type="button" class="btn btn-outline-dark"onclick='add2()'>Add</button>
+                    <input type="hidden" id="imageSource2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="sponsorCheck2" disabled>
+                        <label class="form-check-label" for="sponsorCheck2">Image Uploaded</label>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <label class="input-group-text" for="sponsorLogo3">Choose file</label>
+                    <input type="file" class="form-control" id="sponsorLogo3"onchange='handleImageUpload3()'>
+                    <button type="button" class="btn btn-outline-dark"onclick='add3()'>Add</button>
+                    <input type="hidden" id="imageSource3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="sponsorCheck3" disabled>
+                        <label class="form-check-label" for="sponsorCheck3">Image Uploaded</label>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <label class="input-group-text" for="sponsorLogo4">Choose file</label>
+                    <input type="file" class="form-control" id="sponsorLogo4"onchange='handleImageUpload4()'>
+                    <button type="button" class="btn btn-outline-dark"onclick='add4()'>Add</button>
+                    <input type="hidden" id="imageSource4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="sponsorCheck4" disabled>
+                        <label class="form-check-label" for="sponsorCheck4">Image Uploaded</label>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Add Product Section -->
+        <div class="form-box">
+            <div class="form-title"><strong>Add Product</strong></div>
+            <div>
+                <div class="input-group mb-3">
+                    <label class="input-group-text" for="productImage">Choose file</label>
+                    <input type="file" class="form-control" id="productImage"onchange='handleImageUpload5()'>
+                    <input type="hidden" id="productSource">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="sponsorCheck5" disabled>
+                        <label class="form-check-label" for="sponsorCheck2">Image Uploaded</label>
+                    </div>
+                </div>
+               
+              
+                <button type="submit" class="btn btn-dark"onclick='saveproduct()'>Save</button>
+                <button type="button" class="btn btn-outline-dark">Edit</button>
+            </div>
+        </div>
+
+        <!-- Add Place of the Day Section -->
+        <div class="form-box">
+            <div class="form-title"><strong>Add Place of the Day</strong></div>
+            <div>
+                <div class="input-group mb-3">
+                    <label class="input-group-text" for="placeImage">Choose file</label>
+                    <input type="file" class="form-control" id="placeImage"onchange='handleImageUpload6()'>
+                    <input type="hidden" id="placeSource">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="sponsorCheck6" disabled>
+                        <label class="form-check-label" for="sponsorCheck2">Image Uploaded</label>
+                    </div>
+                </div>
+              
+               
+                <button type="submit" class="btn btn-dark"onclick='saveplace()'>Save</button>
+                <button type="button" class="btn btn-outline-dark">Edit</button>
+            </div>
+        </div>
+
+        <!-- Additional Advertisement Section -->
+        <div class="form-box">
+            <div>
+                <div class="input-group mb-3">
+                    <label class="input-group-text" for="adv1">ADV3</label>
+                    <input type="file" class="form-control" id="adv1"onchange='adv1()'>
+                    <input type="hidden" id="adv1s">
+                    <button type="submit" class="btn btn-dark"onclick='advv1()'>Save</button>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="sponsorCheck7" disabled>
+                        <label class="form-check-label" for="sponsorCheck2">Image Uploaded</label>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <label class="input-group-text" for="adv2">ADV4</label>
+                    <input type="file" class="form-control" id="adv2"onchange='adv2()'>
+                    <input type="hidden" id="adv2s">
+                    <button type="submit" class="btn btn-dark"onclick='advv2()'>Save</button>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="sponsorCheck8" disabled>
+                        <label class="form-check-label" for="sponsorCheck2">Image Uploaded</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-box">
+            <div>
+                <div class="input-group mb-3">
+                    <label class="input-group-text" for="adv1">Yolo TV</label>
+                    <input type="file" class="form-control" id="tv"onchange='savetv()'>
+                    <input type="hidden" id="tvsource">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="sponsorCheck9" disabled>
+                        <label class="form-check-label" for="sponsorCheck2">Image Uploaded</label>
+                        <p id="uploadProgress" style="position: relative; left: 112px; top: 20px;">Upload Progress: 0%</p>
+                    </div>
+                    </div>
+                </div>
+              <button type="submit" class="btn btn-dark"onclick='savetv2()'>Save</button>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyDhZPE8mascQUpraZYrDWKMYa2a0cp7LFw",
+            authDomain: "yolopanel.firebaseapp.com",
+            databaseURL: "https://yolopanel-default-rtdb.firebaseio.com",
+            projectId: "yolopanel",
+            storageBucket: "yolopanel.appspot.com",
+            messagingSenderId: "647674058442",
+            appId: "1:647674058442:web:ca6822cfcbda29b2aac633"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        var database = firebase.database();
+
+        function whutmo() {
+            var cat = document.getElementById("categoryName").value;
+            database.ref("categories").push().set({
+                "cat": cat
+            });
+        }
+
+       // Function to handle image upload and set the image source value
+// Function to handle image upload and set the image source value
+$('document').ready(function () {
+    $("#image2").change(function () {
+        if (this.files && this.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#imgshow').attr('src', e.target.result);
+                document.getElementById('sponsorCheck').checked = true;
+   alert('Image Uploaded Successfully');
+            }
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+});
+
+// Function to save news to the Firebase database
+function saveNews() {
+    var headline = document.getElementById("headline").value;
+    var subHeadline = document.getElementById("subHeadline").value;
+    var newsDetails = document.getElementById("newsDetails").value;
+    var imageSource = document.getElementById("imgshow").src;
+    var source = document.getElementById("source").value;
+    var categ = document.getElementById("categ").value;
+    var newsCategory = document.getElementById("newsCategory").value;
+
+    database.ref("news").push().set({
+        "headline": headline,
+        "subHeadline": subHeadline,
+        "details": newsDetails,
+        "image": imageSource, // Using the loaded image source here
+        "source": source,
+        "category": newsCategory,
+        "categ": categ
+    }).then(function() {
+        alert('News added successfully');
+        document.getElementById("headline").value = '';
+    document.getElementById("subHeadline").value = '';
+    document.getElementById("newsDetails").value = '';
+   
+    document.getElementById("image2").value = ''; // Clear the file input
+    document.getElementById('source').value = '';
+    document.getElementById('categ').selectedIndex  = 0;
+
+    // Reset the dropdown to the default option
+    document.getElementById('newsCategory').selectedIndex = 0;
+     
+    }).catch(function(error) {
+        console.error('Error adding news:', error);
+    });
+}
+
+// Function to clear the form after submission
+
+
+
+
+        function renderCategory(id, category) {
+            return `
+                <li id="category-${id}">
+                    <span class="category-text">${category}</span>
+                    <input type="text" class="form-control category-edit d-none" value="${category}">
+                    <button type="button" class="btn btn-sm btn-outline-dark" onclick="editCategory('${id}')">edit</button>
+                    <button type="button" class="btn btn-sm btn-dark d-none" onclick="saveEdit('${id}')">save</button>
+                </li>
+            `;
+        }
+
+        function editCategory(id) {
+            document.querySelector(`#category-${id} .category-text`).classList.add('d-none');
+            document.querySelector(`#category-${id} .category-edit`).classList.remove('d-none');
+            document.querySelector(`#category-${id} .btn-outline-dark`).classList.add('d-none');
+            document.querySelector(`#category-${id} .btn-dark`).classList.remove('d-none');
+        }
+
+        function saveEdit(id) {
+            var newCategoryName = document.querySelector(`#category-${id} .category-edit`).value;
+            saveCategory(id, newCategoryName);
+
+            // Update the list and dropdown
+            var categoryItem = document.querySelector(`#category-${id}`);
+            categoryItem.innerHTML = renderCategory(id, newCategoryName);
+        }
+
+        function saveCategory(id, newCategoryName) {
+            database.ref("categories/" + id).update({
+                "cat": newCategoryName
+            });
+        }
+
+        // Fetch categories and update both the list and dropdown
+        database.ref("categories").on("child_added", function(snapshot) {
+            var id = snapshot.key;
+            var category = snapshot.val().cat;
+
+            // Update Category List
+            var cate = document.getElementById("catnames");
+            cate.innerHTML = renderCategory(id, category) + cate.innerHTML;
+
+            // Update News Category Dropdown
+            var dropdownOption = `
+                <option value="${id}">${category}</option>
+            `;
+            var newsCategoryDropdown = document.getElementById("newsCategory");
+            newsCategoryDropdown.innerHTML = newsCategoryDropdown.innerHTML + dropdownOption;
+        });
+        var database = firebase.database();
+
+        function handleImageUpload55() {
+   var fileInput = document.getElementById("sponsorLogo1");
+   var file = fileInput.files[0];
+   var reader = new FileReader();
+
+   reader.onloadend = function () {
+       var imageSource = reader.result;
+       document.getElementById("imageSource55").value = imageSource;
+     
+       
+   };
+  
+   if (file) {
+       reader.readAsDataURL(file);
+   }
+   
+       
+}
+function handleImageUpload2() {
+   var fileInput = document.getElementById("sponsorLogo2");
+   var file = fileInput.files[0];
+   var reader = new FileReader();
+
+   reader.onloadend = function () {
+       var imageSource = reader.result;
+       document.getElementById("imageSource2").value = imageSource;
+     
+   };
+  
+   if (file) {
+       reader.readAsDataURL(file);
+   }
+   document.getElementById('sponsorCheck2').checked = true;
+   alert('Image Uploaded Successfully');
+}
+function updateCategory2() {
+        var selectedCategoryId = document.getElementById("newsCategory").value;
+        var categElement = document.getElementById("categ");
+
+        // Fetch the category name from Firebase using the selected ID
+        if (selectedCategoryId) {
+            database.ref("categories/" + selectedCategoryId).once('value', function(snapshot) {
+                var categoryName = snapshot.val().cat;
+                categElement.value = categoryName; // Set the name of the category to the categ element
+            });
+        } else {
+            categElement.value = ""; // Clear the categ element if no category is selected
+        }
+    }
+function handleImageUpload3() {
+   var fileInput = document.getElementById("sponsorLogo3");
+   var file = fileInput.files[0];
+   var reader = new FileReader();
+
+   reader.onloadend = function () {
+       var imageSource = reader.result;
+       document.getElementById("imageSource3").value = imageSource;
+       document.getElementById('sponsorCheck3').checked = true;
+        alert('Image Uploaded Successfully');
+   };
+  
+   if (file) {
+       reader.readAsDataURL(file);
+   }
+}
+function handleImageUpload4() {
+   var fileInput = document.getElementById("sponsorLogo4");
+   var file = fileInput.files[0];
+   var reader = new FileReader();
+
+   reader.onloadend = function () {
+       var imageSource = reader.result;
+       document.getElementById("imageSource4").value = imageSource;
+      
+       document.getElementById('sponsorCheck4').checked = true;
+        alert('Image Uploaded Successfully');
+   };
+  
+   if (file) {
+       reader.readAsDataURL(file);
+   }
+}
+function handleImageUpload5() {
+   var fileInput = document.getElementById("productImage");
+   var file = fileInput.files[0];
+   var reader = new FileReader();
+
+   reader.onloadend = function () {
+       var imageSource = reader.result;
+       document.getElementById("productSource").value = imageSource;
+    
+       document.getElementById('sponsorCheck5').checked = true;
+   alert('Image Uploaded Successfully');
+   };
+  
+   if (file) {
+       reader.readAsDataURL(file);
+   }
+}
+function handleImageUpload6() {
+   var fileInput = document.getElementById("placeImage");
+   var file = fileInput.files[0];
+   var reader = new FileReader();
+
+   reader.onloadend = function () {
+       var imageSource = reader.result;
+       document.getElementById("placeSource").value = imageSource;
+    
+       document.getElementById('sponsorCheck6').checked = true;
+   alert('Image Uploaded Successfully');
+   };
+  
+   if (file) {
+       reader.readAsDataURL(file);
+   }
+}
+function savetv() {
+    var fileInput = document.getElementById("tv");
+    var file = fileInput.files[0];
+
+    if (file) {
+        // Reference to the storage location
+        var storageRef = firebase.storage().ref('videos/' + file.name);
+
+        // Upload the file to Firebase Storage
+        var uploadTask = storageRef.put(file);
+
+        // Monitor the upload progress
+        uploadTask.on('state_changed', 
+            function(snapshot) {
+                var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log('Upload is ' + progress + '% done');
+                const uploadProgress = document.getElementById('uploadProgress').textContent= 'Upload Progress: ' + progress.toFixed(2) + '%';
+            }, 
+            function(error) {
+                console.error('Upload failed:', error);
+            }, 
+            function() {
+                // Upload completed successfully, now get the download URL
+                uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+                    document.getElementById("tvsource").value = downloadURL;
+                    document.getElementById('sponsorCheck9').checked = true;
+                    alert('Video Uploaded Successfully');
+                });
+            }
+        );
+    }
+}
+
+function savetv2() {
+    var tv = document.getElementById('tvsource').value;
+
+    // Save the download URL to Firebase Realtime Database
+    database.ref("tv").push().set({
+        "videoUrl": tv,
+    }, function(error) {
+        if (error) {
+            alert('Error saving video URL: ' + error.message);
+        } else {
+            alert('Video URL added successfully');
+        }
+    });
+}
+
+
+function adv1() {
+   var fileInput = document.getElementById("adv1");
+   var file = fileInput.files[0];
+   var reader = new FileReader();
+
+   reader.onloadend = function () {
+       var imageSource = reader.result;
+       document.getElementById("adv1s").value = imageSource;
+    
+       document.getElementById('sponsorCheck7').checked = true;
+   alert('Image Uploaded Successfully');
+   };
+  
+   if (file) {
+       reader.readAsDataURL(file);
+   }
+}
+function adv2() {
+   var fileInput = document.getElementById("adv2");
+   var file = fileInput.files[0];
+   var reader = new FileReader();
+
+   reader.onloadend = function () {
+       var imageSource = reader.result;
+       document.getElementById("adv2s").value = imageSource;
+       document.getElementById('sponsorCheck8').checked = true;
+       alert('Image Uploaded Successfully');
+      
+   };
+  
+   if (file) {
+       reader.readAsDataURL(file);
+   }
+}
+
+
+
+function add1(){
+   var sponsor=document.getElementById('imageSource55').value
+   database.ref("sponsersup").push().set({
+       
+       "image": sponsor,
+       
+   });
+   alert('added')
+}
+function add2(){
+   var sponsor=document.getElementById('imageSource2').value
+   database.ref("sponsersup2").push().set({
+       
+       "image": sponsor,
+       
+   });
+   alert('added')
+}
+function add3(){
+   var sponsor=document.getElementById('imageSource3').value
+   database.ref("sponsersup3").push().set({
+       
+       "image": sponsor,
+       
+   });
+   alert('added')
+}
+function add4(){
+   var sponsor=document.getElementById('imageSource4').value
+   database.ref("sponsersup4").push().set({
+       
+       "image": sponsor,
+       
+   });
+   alert('added')
+}
+function saveproduct(){
+   var product=document.getElementById('productSource').value
+   database.ref("product").push().set({
+       
+       "image": product,
+       
+   });
+   alert('added')
+}
+
+function saveplace(){
+   var place=document.getElementById('placeSource').value
+   database.ref("place").push().set({
+       
+       "image": place,
+       
+   });
+   alert('added')
+}
+
+function advv1(){
+   var tv=document.getElementById('adv1s').value
+   database.ref("sponser").push().set({
+       
+       "image": tv,
+       
+   });
+   alert('added')
+}
+
+function advv2(){
+   var tv=document.getElementById('adv2s').value
+   database.ref("sponser2").push().set({
+       
+       "image": tv,
+       
+   });
+   alert('added')
+}
+
+    function handleImageUpload() {
+        document.getElementById('sponsorCheck1').checked = true;
+        alert('Image Uploaded Successfully');
+    }
+    </script>
+</body>
+</html>
